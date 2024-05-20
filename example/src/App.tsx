@@ -100,7 +100,7 @@ export default function App() {
           />
         </View>
       ) : (
-        <View style={{ borderColor: 'red', borderWidth: 2, flex: 1 }}>
+        <>
           <Camera
             // You're free to do any react-native-vision-camera customization you'd normally do
             enableFpsGraph={DEBUGGING_MODE}
@@ -118,7 +118,7 @@ export default function App() {
             debug={DEBUGGING_MODE}
             onBarcodeTapped={(barcode) => setTappedCode(barcode)}
           />
-        </View>
+        </>
       )}
       <SafeAreaView edges={['top', 'left', 'right']} style={styles.actions}>
         <View style={styles.tappedContainer}>

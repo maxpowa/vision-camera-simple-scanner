@@ -118,15 +118,13 @@ public class CodeScannerProcessorPlugin extends FrameProcessorPlugin {
     if (params == null) return Barcode.FORMAT_ALL_FORMATS;
     Set<Integer> barcodeFormats = new HashSet<>();
     Object barcodeTypesObj = params.get("barcodeTypes");
-    if (barcodeTypesObj instanceof Map) {
-      Map<String, String> barcodeTypes = (Map<String, String>) barcodeTypesObj;
-      barcodeTypes
-        .values()
-        .forEach(type -> {
-          Integer format = BarcodeFormatMapper.getFormat(type);
-          if (format != null) barcodeFormats.add(format);
-          else Log.e(TAG, "Unsupported barcode type: " + type);
-        });
+    if (barcodeTypesObj instanceof ArrayList<?>) {
+      ArrayList<String> barcodeTypes = (ArrayList<String>) barcodeTypesObj;
+      for (String type : barcodeTypes) {
+        Integer format = BarcodeFormatMapper.getFormat(type);
+        if (format != null) barcodeFormats.add(format);
+        else Log.e(TAG, "Unsupported barcode type: " + type);
+      }
     }
     return barcodeFormats.isEmpty()
       ? Barcode.FORMAT_ALL_FORMATS
