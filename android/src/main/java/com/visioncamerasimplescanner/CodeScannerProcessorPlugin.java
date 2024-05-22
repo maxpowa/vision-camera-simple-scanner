@@ -30,6 +30,7 @@ public class CodeScannerProcessorPlugin extends FrameProcessorPlugin {
   private static final String TAG = VisionCameraSimpleScannerModule.NAME;
   private static BarcodeScanner barcodeScanner = null;
   private static int previousBarcodeScannerFormatsBitmap = -1;
+  private static boolean coerceUPCA = false;
 
   CodeScannerProcessorPlugin(
     @NotNull VisionCameraProxy proxy,
@@ -70,7 +71,17 @@ public class CodeScannerProcessorPlugin extends FrameProcessorPlugin {
       List<Object> barcodes = new ArrayList<>();
       List<Barcode> barcodeList = Tasks.await(scanner.process(inputImage));
       barcodeList.forEach(
-        barcode -> barcodes.add(BarcodeConverter.convertBarcode(barcode))
+        barcode -> {
+          Map<String, Object> convertedCode = BarcodeConverter.convertBarcode(barcode);
+          // Janky-ass code thanks to MLKit not properly using its input options...
+          // See also https://github.com/googlesamples/mlkit/issues/797 (which google has not even acknowledged)
+          if (coerceUPCA && (((Integer)convertedCode.get("format")) == Barcode.FORMAT_UPC_A)) {
+            convertedCode.put("format", Barcode.FORMAT_EAN_13);
+            convertedCode.put("displayValue", "0" + convertedCode.get("displayValue"));
+            convertedCode.put("rawValue", "0" + convertedCode.get("rawValue"));
+          }
+          barcodes.add(convertedCode);
+        }
       );
 
       return barcodes;
@@ -126,9 +137,15 @@ public class CodeScannerProcessorPlugin extends FrameProcessorPlugin {
         else Log.e(TAG, "Unsupported barcode type: " + type);
       }
     }
-    return barcodeFormats.isEmpty()
-      ? Barcode.FORMAT_ALL_FORMATS
-      : barcodeFormatsToBitmap(barcodeFormats);
+
+    if (barcodeFormats.isEmpty()) {
+      return Barcode.FORMAT_ALL_FORMATS;
+    }
+
+    if (!barcodeFormats.contains(Barcode.FORMAT_UPC_A)) {
+      coerceUPCA = true;
+    }
+    return barcodeFormatsToBitmap(barcodeFormats);
   }
 
   private int barcodeFormatsToBitmap(Set<Integer> barcodeFormats) {
