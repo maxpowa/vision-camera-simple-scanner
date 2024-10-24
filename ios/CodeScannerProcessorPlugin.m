@@ -192,6 +192,8 @@ static RCTEventEmitter* eventEmitter = nil;
     return VNBarcodeSymbologyEAN8;
   } else if ([barcodeType isEqualToString:@"ean-13"]) {
     return VNBarcodeSymbologyEAN13;
+  } else if ([barcodeType isEqualToString:@"itf-2of5"]) {
+    return VNBarcodeSymbologyI2of5;
   } else if ([barcodeType isEqualToString:@"itf"]) {
     return VNBarcodeSymbologyITF14;
   } else if ([barcodeType isEqualToString:@"pdf-417"]) {
