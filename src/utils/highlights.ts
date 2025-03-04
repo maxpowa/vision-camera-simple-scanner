@@ -18,7 +18,10 @@ export const computeHighlights = (
     return [];
   }
 
-  let adjustedLayout = layout;
+  let adjustedLayout = {
+    width: layout.height,
+    height: layout.width,
+  };
   if (Platform.OS === 'ios') {
     /* iOS:
      * "portrait" -> "landscape-right"
