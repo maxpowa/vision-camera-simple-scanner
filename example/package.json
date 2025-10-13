@@ -29,7 +29,7 @@
   "devDependencies": {
     "@babel/core": "^7.24.4",
     "@babel/preset-env": "^7.24.4",
-    "@babel/runtime": "^7.24.4",
+    "@babel/runtime": "^7.26.10",
     "@mgcrea/eslint-config-react-native": "^0.10.1",
     "@mgcrea/metro-plugin-linked-packages": "^1.2.0",
     "@react-native/babel-preset": "^0.73.21",
